@@ -1,0 +1,349 @@
+*****************Practical No. 1: BFS and DFS***********************
+# BFS
+graph = {
+  'A': ['B', 'C'],
+  'B': ['D', 'E'],
+  'C': ['F'],
+  'D': [],
+  'E': ['F'],
+  'F': []
+}
+visited = []
+queue = []
+
+def bfs(visited, graph, node):
+  visited.append(node)
+  queue.append(node)
+
+  while queue:
+    s = queue.pop(0)
+    print(s, end=" ")
+
+    for neighbour in graph[s]:
+      if neighbour not in visited:
+        visited.append(neighbour)
+        queue.append(neighbour)
+
+print("following path is Breadth-First Algorithm")
+bfs(visited, graph, 'A')
+Output:
+following path is Breadth-First Algorithm
+A B C D E F
+
+
+# DFS
+graph = {
+  'A': ['B', 'C'],
+  'B': ['D', 'E'],
+  'C': ['F'],
+  'D': [],
+  'E': ['F'],
+  'F': []
+}
+visited = set()
+
+def dfs(visited, graph, node):
+  if node not in visited:
+    print(node, end=" \n")
+    visited.add(node)
+
+    for neighbour in graph[node]:
+      dfs(visited, graph, neighbour)
+
+print("\nfollowing path is Depth-First Algorithm")
+dfs(visited, graph, 'A')
+
+Output:
+following path is Depth-First Algorithm
+A
+B
+D
+E
+F
+C
+
+
+
+*******************Practical No. 2: A Algorithm***********************
+import math
+import heapq
+
+class Graph:
+    def __init__(self, vertices):
+        self.V = vertices
+        self.adj_matrix = [[-1 for _ in range(vertices)] for _ in range(vertices)]
+        self.coordinates = [(0, 0)] * vertices
+
+    def add_edge(self, u, v, w):
+        self.adj_matrix[u][v] = w
+        self.adj_matrix[v][u] = w
+
+    def set_coordinates(self, node, x, y):
+        self.coordinates[node] = (x, y)
+
+    def heuristic(self, a, b):
+        x1, y1 = self.coordinates[a]
+        x2, y2 = self.coordinates[b]
+        return math.hypot(x2 - x1, y2 - y1)
+
+    def a_star(self, start, goal):
+        g = [float('inf')] * self.V
+        f = [float('inf')] * self.V
+        visited = [False] * self.V
+        parent = [-1] * self.V
+
+        g[start] = 0
+        f[start] = self.heuristic(start, goal)
+
+        pq = [(f[start], start)]
+
+        while pq:
+            _, current = heapq.heappop(pq)
+
+            if visited[current]:
+                continue
+            visited[current] = True
+
+            if current == goal:
+                break
+
+            for neighbor in range(self.V):
+                weight = self.adj_matrix[current][neighbor]
+                if weight != -1 and not visited[neighbor]:
+                    tentative_g = g[current] + weight
+                    if tentative_g < g[neighbor]:
+                        g[neighbor] = tentative_g
+                        f[neighbor] = g[neighbor] + self.heuristic(neighbor, goal)
+                        parent[neighbor] = current
+                        heapq.heappush(pq, (f[neighbor], neighbor))
+
+        if visited[goal]:
+            print(f"Shortest path cost from {start} to {goal}: {g[goal]}")
+            path = []
+            node = goal
+            while node != -1:
+                path.append(node)
+                node = parent[node]
+            print("Path:", ' -> '.join(map(str, reversed(path))))
+        else:
+            print(f"No path found from {start} to {goal}")
+
+# Example usage
+g = Graph(5)
+g.set_coordinates(0, 0, 0)
+g.set_coordinates(1, 1, 2)
+g.set_coordinates(2, 2, 1)
+g.set_coordinates(3, 3, 3)
+g.set_coordinates(4, 4, 0)
+
+g.add_edge(0, 1, 5)
+g.add_edge(0, 2, 10)
+g.add_edge(1, 2, 3)
+g.add_edge(2, 3, 7)
+g.add_edge(1, 3, 2)
+g.add_edge(3, 4, 1)
+
+g.a_star(0, 3)
+
+Output:
+Shortest path cost from 0 to 3: 7
+Path: 0 -> 1 -> 3
+
+***********************Practical No. 3: Selection Sort****************
+def SelectionSort(arr):
+    for i in range(len(arr)):
+        min_index = i
+        for j in range(i + 1, len(arr)):
+            if arr[j] < arr[min_index]:
+                min_index = j
+        arr[i], arr[min_index] = arr[min_index], arr[i]
+    return arr
+
+user_input = input("Enter numbers separated by spaces: ")
+arr = list(map(int, user_input.split()))
+
+print("Selection Sort is:")
+print(SelectionSort(arr))
+
+
+
+
+***********************Practical No. 4: N-Queens Problem**************
+def place(r, c):
+    for i in range(1, r):
+        if x[i] == c or abs(x[i] - c) == abs(i - r):
+            return False
+    return True
+
+def print_solution(n):
+    global count
+    count += 1
+    print(f"\n\nSolution {count}")
+    print("\t", end="")
+    for i in range(1, n + 1):
+        print(i, end="\t")
+    for i in range(1, n + 1):
+        print(f"\n{i}", end="\t")
+        for j in range(1, n + 1):
+            if x[i] == j:
+                print("Q", end="\t")
+            else:
+                print("-", end="\t")
+
+def NQueen(r, n):
+    for c in range(1, n + 1):
+        if place(r, c):
+            x[r] = c
+            if r == n:
+                print_solution(n)
+            else:
+                NQueen(r + 1, n)
+
+# -------- Main Program --------
+x = [0] * 20
+count = 0
+
+print("****** N-Queen Solution *****")
+n = int(input("Enter the number of Queens: "))
+NQueen(1, n)
+
+Output:
+****** N-Queen Solution *****
+Enter the number of Queens: 4
+
+
+Solution 1
+	1	2	3	4
+1	-	Q	-	-
+2	-	-	-	Q
+3	Q	-	-	-
+4	-	-	Q	-
+
+
+Solution 2
+	1	2	3	4
+1	-	-	Q	-
+2	Q	-	-	-
+3	-	-	-	Q
+4	-	Q	-	-
+
+
+
+
+*******************Practical No. 5: Simple Chatbot*********************
+import datetime
+import random
+
+greetings = ['Hello!', 'Hi!']
+salutations = ['Bye!', 'See you soon!', 'Have a good day!']
+others = {
+    "weather": ["sunny", "chilly", "rainy"],
+    "name": ["My name is HarshBot", "Myself HarshBot", "People call me HarshBot"]
+}
+
+def greet():
+    print(random.choice(greetings))
+
+def farewell():
+    print(random.choice(salutations))
+
+def date():
+    print("The date is", str(datetime.datetime.now())[:10])
+
+def time():
+    print("The time is", str(datetime.datetime.now())[11:16])
+
+def process(inp):
+    if "hello" in inp.lower():
+        greet()
+    elif "bye" in inp.lower():
+        farewell()
+        return True
+    elif "date" in inp.lower():
+        date()
+    elif "time" in inp.lower():
+        time()
+    else:
+        found_response = False
+        for key, value in others.items():
+            if key in inp.lower():
+                print(random.choice(value))
+                found_response = True
+                break
+        if not found_response:
+            print("idk")
+    return False
+
+finished = False
+while not finished:
+    inp = input("> ")
+    finished = process(inp)
+
+output:
+> hello
+Hi!
+
+> what's your name?
+People call me HarshBot
+
+> what's the weather like?
+rainy
+
+> date
+The date is 2025-04-29
+
+> time
+The time is 15:42
+
+> bye
+Have a good day!
+
+
+
+
+
+****************Practical No. 6: Rule-Based Expert System**************
+rules = {
+    "rule1": {
+        "condition" : lambda data : data["attendance"] >=7.5 and data["creative"] >= 7,
+        "output" : "Excellent Employee!"
+    },
+    "rule2" : {
+        "condition" : lambda data : data["attendance"] >= 5 and data["creative"] >=6 ,
+        "output" : "Average Employee"
+    },
+    "rule3" : {
+        "condition" : lambda data: data["attendance"] <5 and data["creative"] <5,
+        "output" : "Poor"
+    }
+}
+
+def evaluate(data):
+    for rule in rules.values():
+        if rule['condition'](data):
+            return rule['output']
+    return "Need more details"
+
+data = {
+    "attendance" : int(input("attendance: ")),
+    "creative" : int(input("creative: "))
+}
+
+perf = evaluate(data)
+print(perf)
+
+Output:
+attendance: 9
+creative: 10
+Excellent Employee!
+
+
+
+
+
+
+
+
+
+
+
